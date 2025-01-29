@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adventure | Adventure Vault</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('bg.jpg');
+            background-size: cover;
+            background-position: center center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            background-attachment: fixed;
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .logo-container img {
+            width: 250px;
+            height: auto;
+        }
+
+        .adventure-container, .upload-container {
+            background-color: #F5D469;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #adventure-text {
+            color: #444;
+            font-size: 22px;
+            font-weight: bold;
+            min-height: 50px;
+        }
+
+        .btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            background-color: #222;
+        }
+
+        #wallet {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 80px;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #wallet.glow {
+            transform: scale(1.2);
+        }
+
+        .coin {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url('coin.png'); /* Replace with your coin image */
+            background-size: cover;
+            z-index: 1000;
+            animation: fly-to-wallet 2s forwards ease-in-out;
+        }
+
+        @keyframes fly-to-wallet {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            90% {
+                opacity: 1;
+                transform: translate(calc(100vw - 120px), calc(100vh - 60px)) scale(0.8);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(100vw - 120px), calc(100vh - 60px)) scale(0.5);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Reusable Navbar -->
+    <div id="navbar" style="position: fixed; top: 0; ..."></div>
+    
+    <!-- Page Content -->
+    <div class="main-content">
+        <!-- Page-specific content goes here -->
+    </div>
+
+    <!-- Logo -->
+    <div class="logo-container">
+        <img src="logo.png" alt="Adventure Vault Logo">
+    </div>
+
+    <!-- Adventure Container -->
+    <div class="adventure-container" id="adventure-container">
+        <h1>Your Adventure Challenge:</h1>
+        <p id="adventure-text">Click the button to start!</p>
+        <button class="btn" onclick="generateAdventure()">🎲 Get an Adventure</button>
+        <button class="btn" id="completed-btn" style="display: none;" onclick="completedAdventure()">✅ I Did It!</button>
+    </div>
+
+    <!-- Upload Container -->
+    <div class="upload-container hidden" id="upload-container" style="display: none;">
+        <h2>Congratulations on completing your adventure!</h2>
+        <p>Would you like to share a picture of your accomplishment?</p>
+        <input type="file" id="upload" accept="image/*" onchange="uploadPicture()">
+        <p>Or, go back to the homepage:</p>
+        <a href="Home-page.html">
+            <button class="btn" id="home-btn">🏠 Back to Home</button>
+        </a>
+    </div>
+
+    <!-- Wallet -->
+    <img id="wallet" src="wallet.png" alt="Wallet" onclick="goToWallet()"> <!-- Replace with your wallet image -->
+
+    <script>
+        const adventures = [
+            "Go for a walk in a park you've never visited.",
+            "Try a new recipe or cook a dish you've never made.",
+            "Write a letter to your future self.",
+            "Draw something, even if you're not an artist.",
+            "Watch a movie from a genre you rarely watch.",
+            "Plan a road trip, even if it's just imaginary.",
+            "Learn a new dance move or watch a dance tutorial.",
+            "Do 10 push-ups or a short exercise routine.",
+            "Take a picture of something beautiful around you.",
+            "Clean or organize one small area of your room.",
+            "Try meditating for 5 minutes.",
+            "Learn to say 'hello' in 5 different languages.",
+            "Read the first chapter of a book you've been putting off.",
+            "Visit a local cafe or restaurant you've never tried.",
+            "Find and appreciate a random piece of street art.",
+            "Try writing a short poem or a haiku.",
+            "Research an interesting fact about a random topic.",
+            "Take a different route to a familiar destination.",
+            "Plant a seed or water a plant.",
+            "Make a list of 5 things you're grateful for.",
+            "Sketch or doodle something from your imagination.",
+            "Do a random act of kindness.",
+            "Dance to your favorite song for 3 minutes.",
+            "Try a new workout or stretch routine.",
+            "Watch the sunrise or sunset.",
+            "Compliment a stranger or someone close to you.",
+            "Explore a nearby park or green space.",
+            "Learn a fun fact about your city or town.",
+            "Write down a goal and a first step to achieve it.",
+            "Organize your phone's photo gallery.",
+            "Build something using recycled materials.",
+            "Write a short story in 50 words.",
+            "Identify 3 constellations in the night sky.",
+            "Go one hour without using your phone.",
+            "Create a playlist with 5 songs that lift your mood.",
+            "Learn a simple magic trick.",
+            "Cook a meal using only 5 ingredients.",
+            "Try a food or drink you've never had before.",
+            "Do a small DIY or craft project.",
+            "Have a conversation with someone new.",
+            "List 3 things you want to learn this year.",
+            "Walk 10,000 steps in a day.",
+            "Create a vision board or mood board.",
+            "Spend 10 minutes journaling.",
+            "Learn to fold a paper crane or origami.",
+            "Spend an evening stargazing.",
+            "Call or message an old friend.",
+            "Go on a photo scavenger hunt.",
+            "Paint or decorate a rock and leave it outside.",
+            "Read a poem or short story aloud.",
+            "Visit a local museum or cultural site.",
+            "Find an interesting podcast and listen to an episode.",
+            "Write a thank-you note to someone.",
+            "Start learning a new skill (like coding or baking).",
+            "Try a new flavor of ice cream or dessert.",
+            "Create a small piece of art with household items.",
+            "Spend time watching birds or wildlife.",
+            "Make a list of 10 positive affirmations.",
+            "Test out a new hairstyle or outfit idea.",
+            "Create a handwritten letter for a loved one.",
+            "Do a random puzzle or brain teaser.",
+            "Make a playlist for a specific mood or event.",
+            "Learn how to say 'thank you' in 5 languages.",
+            "Take a tech-free walk in nature.",
+            "Read a random article about a topic you know little about.",
+            "Declutter 5 things from your living space.",
+            "Try a new type of tea or coffee.",
+            "Plan a weekend getaway, even if it's just imaginary.",
+            "Watch a documentary about an unfamiliar topic.",
+            "Bake cookies or a treat and share them.",
+            "Learn a fun fact about a different culture.",
+            "Try mimicking an accent for fun.",
+            "Take time to sketch a self-portrait.",
+            "Create a mini time capsule to open in the future.",
+            "Explore a new part of your city.",
+            "Make a collage from old magazines or newspapers.",
+            "Find a recipe and make something from scratch.",
+            "Try solving a crossword or sudoku puzzle.",
+            "Learn to identify a local tree or plant.",
+            "Write down 3 things you love about yourself.",
+            "Try 5 different yoga poses.",
+            "Listen to a genre of music you don’t usually like.",
+            "Plan an imaginary trip to your dream destination.",
+            "Photograph something unique in your surroundings.",
+            "Build a fort using blankets and pillows.",
+            "Research a historical event that happened near you.",
+            "Try recreating a childhood favorite activity.",
+            "Experiment with making your own smoothie.",
+            "Learn a basic phrase in sign language.",
+            "Write a short story about an adventurous character."
+        ];
+
+        // Initialize coins if not already set
+        if (!localStorage.getItem("coins")) {
+            localStorage.setItem("coins", "0");
+        }
+
+        function generateAdventure() {
+            const randomIndex = Math.floor(Math.random() * 100);
+            document.getElementById("adventure-text").textContent = adventures[randomIndex];
+            document.getElementById("completed-btn").style.display = "inline-block";
+        }
+
+        function completedAdventure() {
+            const adventureContainer = document.getElementById("adventure-container");
+            const uploadContainer = document.getElementById("upload-container");
+
+            adventureContainer.classList.add("hidden");
+            setTimeout(() => {
+                adventureContainer.style.display = "none";
+                uploadContainer.style.display = "block";
+                uploadContainer.classList.remove("hidden");
+            }, 500);
+        }
+
+        function uploadPicture() {
+            const homeBtn = document.getElementById("home-btn");
+            const rect = homeBtn.getBoundingClientRect();
+
+            for (let i = 0; i < 5; i++) {
+                createFlyingCoin(rect.left + 20, rect.top + 10);
+            }
+
+            // Add 5 coins to the wallet
+            const currentCoins = parseInt(localStorage.getItem("coins"), 10);
+            localStorage.setItem("coins", currentCoins + 5);
+
+            // Wallet glow effect
+            setTimeout(() => {
+                const wallet = document.getElementById("wallet");
+                wallet.classList.add("glow");
+                setTimeout(() => wallet.classList.remove("glow"), 500);
+            }, 2000);
+        }
+
+        function createFlyingCoin(startX, startY) {
+            const coin = document.createElement("div");
+            coin.className = "coin";
+            document.body.appendChild(coin);
+
+            coin.style.left = `${startX}px`;
+            coin.style.top = `${startY}px`;
+
+            coin.addEventListener("animationend", () => {
+                document.body.removeChild(coin);
+            });
+        }
+
+        function goToWallet() {
+            window.location.href = "wallet.html";
+        }
+    </script>
+</body>
+</html>
+
+

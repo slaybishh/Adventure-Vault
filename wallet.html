@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wallet | Adventure Vault</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #F5D469;
+            text-align: center;
+            padding: 50px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .coin-display {
+            font-size: 48px;
+            color: #444;
+            font-weight: bold;
+        }
+
+        .btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #222;
+        }
+    </style>
+</head>
+<body>
+    <!-- Reusable Navbar -->
+    <div id="navbar" style="position: fixed; top: 0; ..."></div>
+    
+    <!-- Page Content -->
+    <div class="main-content">
+        <!-- Page-specific content goes here -->
+    </div>
+
+    <h1>My Wallet</h1>
+    <p class="coin-display" id="coin-count">0 Coins</p>
+    <a href="Home-page.html">
+        <button class="btn"> Back </button>
+    </a>
+
+    <script>
+        const coins = localStorage.getItem("coins") || "0";
+        document.getElementById("coin-count").textContent = `${coins} Coins`;
+    </script>
+</body>
+</html>

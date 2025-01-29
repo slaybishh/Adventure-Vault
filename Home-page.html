@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adventure | Adventure Vault</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('bg.jpg');
+            background-size: cover;
+            background-position: center center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            background-attachment: fixed;
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .logo-container img {
+            width: 250px;
+            height: auto;
+        }
+
+        .adventure-container, .upload-container {
+            background-color: #F5D469;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #adventure-text {
+            color: #444;
+            font-size: 22px;
+            font-weight: bold;
+            min-height: 50px;
+        }
+
+        .btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            background-color: #222;
+        }
+
+        #wallet, #profile {
+            position: absolute;
+            bottom: 20px;
+            width: 80px;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #wallet {
+            right: 20px;
+        }
+
+        #profile {
+            left: 20px;
+        }
+
+        #wallet.glow {
+            transform: scale(1.2);
+        }
+
+        .coin {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url('coin.png'); /* Replace with your coin image */
+            background-size: cover;
+            z-index: 1000;
+            animation: fly-to-wallet 2s forwards ease-in-out;
+        }
+
+        @keyframes fly-to-wallet {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            90% {
+                opacity: 1;
+                transform: translate(calc(100vw - 120px), calc(100vh - 60px)) scale(0.8);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(100vw - 120px), calc(100vh - 60px)) scale(0.5);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo -->
+    <div class="logo-container">
+        <img src="logo.png" alt="Adventure Vault Logo">
+    </div>
+
+    <!-- Adventure Container -->
+    <div class="adventure-container" id="adventure-container">
+        <h1>Your Adventure Challenge:</h1>
+        <p id="adventure-text">Click the button to start!</p>
+        <button class="btn" onclick="generateAdventure()">🎲 Get an Adventure</button>
+        <button class="btn" id="completed-btn" style="display: none;" onclick="completedAdventure()">✅ I Did It!</button>
+    </div>
+
+    <!-- Upload Container -->
+    <div class="upload-container hidden" id="upload-container" style="display: none;">
+        <h2>Congratulations on completing your adventure!</h2>
+        <p>Would you like to share a picture of your accomplishment?</p>
+        <input type="file" id="upload" accept="image/*" onchange="uploadPicture()">
+        <p>Or, go back to the homepage:</p>
+        <a href="Home-page.html">
+            <button class="btn" id="home-btn">🏠 Back to Home</button>
+        </a>
+    </div>
+
+    <!-- Wallet -->
+    <img id="wallet" src="wallet.png" alt="Wallet" onclick="goToWallet()"> <!-- Replace with your wallet image -->
+
+    <!-- Profile -->
+    <img id="profile" src="profile.png" alt="Profile" onclick="goToProfile()"> <!-- Replace with your profile image -->
+
+    <script>
+        const adventures = [
+            "Go for a walk in a park you've never visited.",
+            "Try a new recipe or cook a dish you've never made.",
+            // (Add the remaining adventures here)
+        ];
+
+        // Initialize coins and activities if not already set
+        if (!localStorage.getItem("coins")) {
+            localStorage.setItem("coins", "0");
+        }
+
+        if (!localStorage.getItem("activities")) {
+            localStorage.setItem("activities", JSON.stringify([]));
+        }
+
+        function generateAdventure() {
+            const randomIndex = Math.floor(Math.random() * adventures.length);
+            document.getElementById("adventure-text").textContent = adventures[randomIndex];
+            document.getElementById("completed-btn").style.display = "inline-block";
+        }
+
+        function completedAdventure() {
+            const adventureContainer = document.getElementById("adventure-container");
+            const uploadContainer = document.getElementById("upload-container");
+
+            adventureContainer.classList.add("hidden");
+            setTimeout(() => {
+                adventureContainer.style.display = "none";
+                uploadContainer.style.display = "block";
+                uploadContainer.classList.remove("hidden");
+            }, 500);
+        }
+
+        function uploadPicture() {
+            const inputFile = document.getElementById("upload");
+            if (inputFile.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    const activities = JSON.parse(localStorage.getItem("activities"));
+                    const newActivity = {
+                        adventure: document.getElementById("adventure-text").textContent,
+                        photo: reader.result,
+                    };
+                    activities.push(newActivity);
+                    localStorage.setItem("activities", JSON.stringify(activities));
+
+                    addCoins(5);
+                };
+                reader.readAsDataURL(inputFile.files[0]);
+            }
+        }
+
+        function addCoins(amount) {
+            const currentCoins = parseInt(localStorage.getItem("coins"), 10);
+            localStorage.setItem("coins", currentCoins + amount);
+        }
+
+        function goToWallet() {
+            window.location.href = "wallet.html";
+        }
+
+        function goToProfile() {
+            window.location.href = "profile.html";
+        }
+    </script>
+</body>
+</html>
+
+

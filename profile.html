@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Adventure Vault</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background-image: url('bg.jpg');
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .profile-container {
+            background-color: #FFE4F3;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 450px;
+            position: relative;
+        }
+
+        h1 {
+            color: #FF69B4;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .profile-pic-container {
+            width: 100px;
+            height: 100px;
+            border: 3px solid #FF69B4;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 1rem auto;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .profile-pic-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .input-field {
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+
+        .input-field input, .input-field textarea {
+            width: 90%;
+            padding: 10px;
+            border: 2px solid #FFD1DC;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-top: 5px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-field input:focus, .input-field textarea:focus {
+            border-color: #FF69B4;
+            box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+        }
+
+        .btn {
+            background-color: #FF69B4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #FF4786;
+            transform: scale(1.05);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .info-container {
+            margin-top: 2rem;
+            color: #555;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Reusable Navbar -->
+    <div id="navbar" style="position: fixed; top: 0; ..."></div>
+    
+    <!-- Page Content -->
+    <div class="main-content">
+        <!-- Page-specific content goes here -->
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-pic-container" id="profile-pic-container">
+            <img id="profile-pic" src="default-profile.png" alt="Profile Picture">
+        </div>
+        <h1>Create Your Profile</h1>
+        <form onsubmit="saveProfile(event)">
+            <div class="input-field">
+                <label for="username">Username:</label><br>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="input-field">
+                <label for="display-name">Display Name:</label><br>
+                <input type="text" id="display-name" name="display-name" placeholder="Enter your display name">
+            </div>
+            <div class="input-field">
+                <label for="bio">Bio:</label><br>
+                <textarea id="bio" name="bio" rows="3" placeholder="Tell us about yourself"></textarea>
+            </div>
+            <div class="input-field">
+                <label for="profile-picture">Profile Picture:</label><br>
+                <input type="file" id="profile-picture" name="profile-picture" accept="image/*" onchange="previewProfilePicture(event)">
+            </div>
+            <button type="submit" class="btn">Save Profile</button>
+        </form>
+        <div class="info-container">
+            <p>Your profile information will be saved securely.</p>
+        </div>
+    </div>
+
+    <script>
+        // Load existing profile data on page load
+        window.onload = function () {
+            const storedUsername = localStorage.getItem('username');
+            const storedDisplayName = localStorage.getItem('display-name');
+            const storedBio = localStorage.getItem('bio');
+            const storedProfilePic = localStorage.getItem('profile-pic');
+
+            if (storedUsername) document.getElementById('username').value = storedUsername;
+            if (storedDisplayName) document.getElementById('display-name').value = storedDisplayName;
+            if (storedBio) document.getElementById('bio').value = storedBio;
+            if (storedProfilePic) document.getElementById('profile-pic').src = storedProfilePic;
+        };
+
+        // Save profile data and redirect to home
+        function saveProfile(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value;
+            const displayName = document.getElementById("display-name").value;
+            const bio = document.getElementById("bio").value;
+            const profilePic = document.getElementById("profile-pic").src;
+
+            localStorage.setItem('username', username);
+            localStorage.setItem('display-name', displayName);
+            localStorage.setItem('bio', bio);
+            localStorage.setItem('profile-pic', profilePic);
+
+            alert("Profile saved! Redirecting to the home page...");
+            window.location.href = "Home-page.html"; // Replace with your home page URL
+        }
+
+        // Preview the uploaded profile picture
+        function previewProfilePicture(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById("profile-pic").src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>
